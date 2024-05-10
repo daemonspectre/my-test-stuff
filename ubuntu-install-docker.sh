@@ -4,7 +4,7 @@
 apt-get update && sudo apt-get upgrade -y
 
 # install curl # 
-apt-get install curl
+apt-get install curl -y
 
 # curl ca certs #
 curl ca-certificates
@@ -26,7 +26,7 @@ echo \
 sudo apt-get update
 
 # install :latestversion of docker #
-apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 
 # install compose lastest:version #
 apt-get update
