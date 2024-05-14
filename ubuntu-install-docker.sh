@@ -32,6 +32,18 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 sudo apt-get update
 sudo apt-get install docker-compose-plugin
 
-# verify docker and compose install #
+# This command creates a new user with a home directory and sets the default shell to bash #
+sudo useradd -m -s /bin/bash Docker
+
+# Add the new user to the docker group to grant permission to run Docker commands #
+sudo usermod -aG docker Docker
+
+# make user password #
+sudo passwd Docker
+
+# user login #
+su - Docker
+
+# test #
 docker run hello-world
 docker compose version
