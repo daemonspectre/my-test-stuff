@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Replace 'newuser' with the desired username
+NEW_USER="Docker"
+
 # update and upgrade #
 sudo apt-get update && sudo apt-get upgrade -y
 
@@ -33,17 +36,24 @@ sudo apt-get update
 sudo apt-get install docker-compose-plugin
 
 # This command creates a new user with a home directory and sets the default shell to bash #
-sudo useradd -m -s /bin/bash Docker
+sudo useradd -m -s /bin/bash "$NEW_USER"
 
 # Add the new user to the docker group to grant permission to run Docker commands #
-sudo usermod -aG docker Docker
+sudo usermod -aG sudo "$NEW_USER"
 
 # make user password #
-sudo passwd Docker
+echo "Please set a password for the new user:"
+sudo passwd "$NEW_USER"
 
-# user login #
-su - Docker
+# Create a new directory called "docker" under the new user's /home directory #
+sudo -u "$NEW_USER" mkdir "/home/$NEW_USER/Docker"
+
+# Restrict the new user to only be able to write changes inside their /home directory
+sudo chown -R "$NEW_USER":"$NEW_USER" "/home/$NEW_USER"
+sudo chmod -R 755 "/home/$NEW_USER"
 
 # test #
 docker run hello-world
 docker compose version
+
+echo youve just been slatted
