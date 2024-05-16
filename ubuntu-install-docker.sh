@@ -42,15 +42,14 @@ sudo useradd -m -s /bin/bash "$NEW_USER"
 sudo usermod -aG sudo "$NEW_USER"
 
 # make user password #
-echo "Please set a password for the new user:"
+echo 
+    "Please set a password for the new user:"
 sudo passwd "$NEW_USER"
 
-# Create a new directory called "docker" under the new user's /home directory #
-sudo -u "$NEW_USER" mkdir "/home/$NEW_USER/Docker"
+su "$NEW_USER"
 
-# Restrict the new user to only be able to write changes inside their /home directory
-sudo chown -R "$NEW_USER":"$NEW_USER" "/home/$NEW_USER"
-sudo chmod -R 755 "/home/$NEW_USER"
+mkdir Docker
+cd Docker
 
 # test #
 docker run hello-world
