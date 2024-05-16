@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Replace 'newuser' with the desired username
-NEW_USER="Docker"
-
 # update and upgrade #
 sudo apt-get update && sudo apt-get upgrade -y
 
@@ -34,19 +31,7 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 # install compose lastest:version #
 sudo apt-get update
 sudo apt-get install docker-compose-plugin
-
-# This command creates a new user with a home directory and sets the default shell to bash #
-sudo useradd -m -s /bin/bash "$NEW_USER"
-
-# Add the new user to the docker group to grant permission to run Docker commands #
-sudo usermod -aG sudo "$NEW_USER"
-
-# make user password #
-echo 
-    "Please set a password for the new user:"
-sudo passwd "$NEW_USER"
-
-su "$NEW_USER"
+sudo apt-get full-upgrade -y
 
 mkdir Docker
 cd Docker
@@ -55,4 +40,4 @@ cd Docker
 docker run hello-world
 docker compose version
 
-echo youve just been slatted
+echo cumbum
