@@ -33,11 +33,6 @@ sudo apt-get update
 sudo apt-get install docker-compose-plugin
 sudo apt-get full-upgrade -y
 
-mkdir Docker
-cd Docker
-
 # test #
 docker run hello-world
 docker compose version
-
-echo cumbum
