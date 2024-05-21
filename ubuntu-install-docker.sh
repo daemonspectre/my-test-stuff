@@ -7,7 +7,7 @@ sudo apt-get update && sudo apt-get upgrade -y
 sudo apt-get install curl -y
 
 # curl ca certs #
-curl ca-certificates
+sudo apt-get install ca-certificates curl
 
 # create dir for keyrings #
 install -m 0755 -d /etc/apt/keyrings
