@@ -10,16 +10,16 @@ sudo apt-get install curl -y
 sudo apt-get install ca-certificates curl
 
 # create dir for keyrings #
-install -m 0755 -d /etc/apt/keyrings
+sudo install -m 0755 -d /etc/apt/keyrings
 
 # download docker GPG key #
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 
 # something about permissions #
-chmod a+r /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
 
 # Add the repository to Apt sources and updates #
-echo \
+sudo echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
   $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
@@ -34,5 +34,5 @@ sudo apt-get install docker-compose-plugin
 sudo apt-get full-upgrade -y
 
 # test #
-docker run hello-world
-docker compose version
+sudo docker run hello-world
+sudo docker compose version
