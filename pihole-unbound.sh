@@ -1,27 +1,30 @@
 #!/bin/bash
 
-apt-get update
-apt-get upgrade -y
-apt install git
+# Update and upgrade the system
+sudo apt-get update
+sudo apt-get upgrade -y
 
-ufw allow 80/tcp
-ufw allow 53/tcp
-ufw allow 53/udp
-ufw allow 67/tcp
-ufw allow 67/udp
-ufw allow 546:547/udp
+# Install necessary packages
+sudo apt install -y git unbound
 
-adduser --gecos "" pihole
-usermod -aG sudo pihole
+# Allow necessary firewall rules
+sudo ufw allow 80/tcp
+sudo ufw allow 53/tcp
+sudo ufw allow 53/udp
+sudo ufw allow 67/tcp
+sudo ufw allow 67/udp
+sudo ufw allow 546:547/udp
 
-su pihole
+# Add user pihole and add to sudo group
+sudo adduser --gecos "" pihole
+sudo usermod -aG sudo pihole
 
-sudo apt install unbound -y
-
-wget https://www.internic.net/domain/named.root -qO- | sudo tee /var/lib/unbound/root.hints
+# Download root hints file for Unbound
+sudo wget https://www.internic.net/domain/named.root -qO- | sudo tee /var/lib/unbound/root.hints
 
 # Define the configuration
 read -r -d '' CONFIG << EOM
+# Unbound configuration goes here
 server:
     # If no logfile is specified, syslog is used
     # logfile: "/var/log/unbound/unbound.log"
@@ -91,19 +94,27 @@ server:
     private-address: fe80::/10
 EOM
 
-# Write the configuration to the file
-echo "$CONFIG" > /etc/unbound/unbound.conf.d/pi-hole.conf
+# Check if the directory exists and if not, create it
+sudo mkdir -p /etc/unbound/unbound.conf.d/
 
+# Write the configuration to the file
+echo "$CONFIG" | sudo tee /etc/unbound/unbound.conf.d/pi-hole.conf
+
+# Update the system again
 sudo apt-get update
 
-git clone --depth 1 https://github.com/pi-hole/pi-hole.git Pi-hole
+# Clone Pi-hole repository and run the installation script
+sudo -u pihole git clone --depth 1 https://github.com/pi-hole/pi-hole.git Pi-hole
 cd "Pi-hole/automated install/"
-sudo bash basic-install.sh
+sudo -u pihole bash basic-install.sh
 
-pihole -up
+# Update Pi-hole
+sudo -u pihole pihole -up
 
+# Restart Unbound service
 sudo service unbound restart
-dig pi-hole.net @127.0.0.1 -p 5335
 
+# Test Unbound setup
+dig pi-hole.net @127.0.0.1 -p 5335
 dig fail01.dnssec.works @127.0.0.1 -p 5335
 dig dnssec.works @127.0.0.1 -p 5335
