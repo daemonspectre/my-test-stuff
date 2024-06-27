@@ -94,8 +94,16 @@ EOM
 # Write the configuration to the file
 echo "$CONFIG" > /etc/unbound/unbound.conf.d/pi-hole.conf
 
+sudo apt-get update
+
 git clone --depth 1 https://github.com/pi-hole/pi-hole.git Pi-hole
 cd "Pi-hole/automated install/"
 sudo bash basic-install.sh
 
 pihole -up
+
+sudo service unbound restart
+dig pi-hole.net @127.0.0.1 -p 5335
+
+dig fail01.dnssec.works @127.0.0.1 -p 5335
+dig dnssec.works @127.0.0.1 -p 5335
