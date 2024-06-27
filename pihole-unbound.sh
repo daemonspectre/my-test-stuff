@@ -104,9 +104,10 @@ echo "$CONFIG" | sudo tee /etc/unbound/unbound.conf.d/pi-hole.conf
 sudo apt-get update
 
 # Clone Pi-hole repository and run the installation script
-sudo -u pihole git clone --depth 1 https://github.com/pi-hole/pi-hole.git Pi-hole
-cd "Pi-hole/automated install/"
+sudo -u pihole git clone --depth 1 https://github.com/pi-hole/pi-hole.git /home/pihole/Pi-hole
+cd /home/pihole/Pi-hole/automated\ install/
 sudo -u pihole bash basic-install.sh
+
 
 # Update Pi-hole
 sudo -u pihole pihole -up
