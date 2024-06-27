@@ -11,8 +11,10 @@ ufw allow 67/tcp
 ufw allow 67/udp
 ufw allow 546:547/udp
 
-adduser pihole
+adduser --gecos "" pihole
 usermod -aG sudo pihole
+
+su pihole
 
 sudo apt install unbound -y
 
