@@ -108,8 +108,8 @@ sudo apt-get update
 
 # Clone Pi-hole repository and run the installation script
 sudo -u pihole git clone --depth 1 https://github.com/pi-hole/pi-hole.git /home/Pi-hole
-cd /home/pihole/Pi-hole/automated\ install/
-sudo -u pihole bash basic-install.sh
+cd /home/Pi-hole/automated\ install/
+sudo bash basic-install.sh
 
 
 # Update Pi-hole
