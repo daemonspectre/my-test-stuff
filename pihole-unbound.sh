@@ -15,6 +15,7 @@ sudo ufw allow 53/udp
 sudo ufw allow 67/tcp
 sudo ufw allow 67/udp
 sudo ufw allow 546:547/udp
+sudo ufw allow 5335
 
 # Add user pihole and add to sudo group
 #sudo adduser --gecos "" pihole
@@ -106,13 +107,13 @@ echo "$CONFIG" | sudo tee /etc/unbound/unbound.conf.d/pi-hole.conf
 sudo apt-get update
 
 # Clone Pi-hole repository and run the installation script
-sudo -u pihole git clone --depth 1 https://github.com/pi-hole/pi-hole.git /home/pihole/Pi-hole
+sudo -u pihole git clone --depth 1 https://github.com/pi-hole/pi-hole.git /home/Pi-hole
 cd /home/pihole/Pi-hole/automated\ install/
 sudo -u pihole bash basic-install.sh
 
 
 # Update Pi-hole
-sudo -u pihole pihole -up
+sudo pihole -up
 
 # Restart Unbound service
 sudo service unbound restart
