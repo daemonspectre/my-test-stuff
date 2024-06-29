@@ -3,9 +3,10 @@
 # Update and upgrade the system
 sudo apt-get update
 sudo apt-get upgrade -y
-
+sudo dpkg-reconfigure tzdata
 # Install necessary packages
-sudo apt install -y git unbound
+sudo apt install git -y
+sudo apt install unbound -y
 
 # Allow necessary firewall rules
 sudo ufw allow 80/tcp
@@ -16,8 +17,8 @@ sudo ufw allow 67/udp
 sudo ufw allow 546:547/udp
 
 # Add user pihole and add to sudo group
-sudo adduser --gecos "" pihole
-sudo usermod -aG sudo pihole
+#sudo adduser --gecos "" pihole
+#sudo usermod -aG sudo pihole
 
 # Download root hints file for Unbound
 sudo wget https://www.internic.net/domain/named.root -qO- | sudo tee /var/lib/unbound/root.hints
