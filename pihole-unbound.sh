@@ -46,7 +46,7 @@ server:
 
     # Use this only when you downloaded the list of primary root servers!
     # If you use the default dns-root-data package, unbound will find it automatically
-    #root-hints: "/var/lib/unbound/root.hints"
+    root-hints: "/var/lib/unbound/root.hints"
 
     # Trust glue only if it is within the server's authority
     harden-glue: yes
@@ -86,13 +86,14 @@ server:
     so-rcvbuf: 1m
 
     # Ensure privacy of local IP ranges
-    private-address: 192.168.0.0/16
+   # private-address: 192.168.0.0/16
    # private-address: 169.254.0.0/16
    # private-address: 172.16.0.0/12
    # private-address: 10.0.0.0/8
     private-address: 192.168.0.0/24
-    private-address: fd00::/8
-    private-address: fe80::/10
+    private-address: fe80::/64
+   # private-address: fd00::/8
+   # private-address: fe80::/10
 EOM
 
 # Check if the directory exists and if not, create it
