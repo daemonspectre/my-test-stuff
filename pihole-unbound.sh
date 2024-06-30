@@ -1,28 +1,46 @@
 #!/bin/bash
 
+# Function to check the status of the last command and exit if it failed
+check_status() {
+    if [ $? -ne 0 ]; then
+        echo "Error: Command failed. Exiting."
+        exit 1
+    fi
+}
+
 # Update and upgrade the system
 sudo apt-get update
+check_status
 sudo apt-get upgrade -y
+check_status
 sudo dpkg-reconfigure tzdata
+check_status
+
 # Install necessary packages
 sudo apt install git -y
+check_status
 sudo apt install unbound -y
+check_status
 
 # Allow necessary firewall rules
 sudo ufw allow 80/tcp
+check_status
 sudo ufw allow 53/tcp
+check_status
 sudo ufw allow 53/udp
+check_status
 sudo ufw allow 67/tcp
+check_status
 sudo ufw allow 67/udp
+check_status
 sudo ufw allow 546:547/udp
+check_status
 sudo ufw allow 5335
-
-# Add user pihole and add to sudo group
-#sudo adduser --gecos "" pihole
-#sudo usermod -aG sudo pihole
+check_status
 
 # Download root hints file for Unbound
 sudo wget https://www.internic.net/domain/named.root -qO- | sudo tee /var/lib/unbound/root.hints
+check_status
 
 # Define the configuration
 read -r -d '' CONFIG << EOM
@@ -96,29 +114,63 @@ server:
    # private-address: fd00::/8
    # private-address: fe80::/10
 EOM
+check_status
 
 # Check if the directory exists and if not, create it
 sudo mkdir -p /etc/unbound/unbound.conf.d/
+check_status
 
 # Write the configuration to the file
 echo "$CONFIG" | sudo tee /etc/unbound/unbound.conf.d/pi-hole.conf
+check_status
 
 # Update the system again
 sudo apt-get update
+check_status
 
 # Clone Pi-hole repository and run the installation script
 sudo -u pihole git clone --depth 1 https://github.com/pi-hole/pi-hole.git /home/Pi-hole
+check_status
 cd /home/Pi-hole/automated\ install/
+check_status
 sudo bash basic-install.sh
-
+check_status
 
 # Update Pi-hole
 sudo pihole -up
+check_status
 
 # Restart Unbound service
 sudo service unbound restart
+check_status
 
 # Test Unbound setup
 dig pi-hole.net @127.0.0.1 -p 5335
+if [ $? -ne 0 ]; then
+    echo "Error: dig command for pi-hole.net failed."
+    echo "Checking Unbound service status:"
+    sudo service unbound status
+    echo "Checking firewall rules:"
+    sudo ufw status
+    exit 1
+fi
+
 dig fail01.dnssec.works @127.0.0.1 -p 5335
+if [ $? -ne 0 ]; then
+    echo "Error: dig command for fail01.dnssec.works failed."
+    echo "Checking Unbound service status:"
+    sudo service unbound status
+    echo "Checking firewall rules:"
+    sudo ufw status
+    exit 1
+fi
+
 dig dnssec.works @127.0.0.1 -p 5335
+if [ $? -ne 0 ]; then
+    echo "Error: dig command for dnssec.works failed."
+    echo "Checking Unbound service status:"
+    sudo service unbound status
+    echo "Checking firewall rules:"
+    sudo ufw status
+    exit 1
+fi
