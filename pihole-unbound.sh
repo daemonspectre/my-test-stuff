@@ -39,8 +39,8 @@ sudo ufw allow 5335
 check_status
 
 # Download root hints file for Unbound
-sudo wget https://www.internic.net/domain/named.root -qO- | sudo tee /var/lib/unbound/root.hints
-check_status
+#sudo wget https://www.internic.net/domain/named.root -qO- | sudo tee /var/lib/unbound/root.hints
+#check_status
 
 # Define the configuration
 read -r -d '' CONFIG << EOM
@@ -129,9 +129,9 @@ sudo apt-get update
 check_status
 
 # Clone Pi-hole repository and run the installation script
-sudo -u pihole git clone --depth 1 https://github.com/pi-hole/pi-hole.git /home/Pi-hole
+sudo -u pihole git clone --depth 1 https://github.com/pi-hole/pi-hole.git /home/spectre/Pi-hole
 check_status
-cd /home/Pi-hole/automated\ install/
+cd /home/spectre/Pi-hole/automated\ install/
 check_status
 sudo bash basic-install.sh
 check_status
