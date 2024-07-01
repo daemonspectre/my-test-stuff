@@ -3,6 +3,9 @@
 # Exit immediately if a command exits with a non-zero status
 set -e
 
+# Print the line number when the script fails
+trap 'echo "Script failed at line $LINENO"' ERR
+
 # Update package lists for upgrades for packages that need upgrading
 if ! sudo apt-get update; then
     echo "Failed to update packages list."
