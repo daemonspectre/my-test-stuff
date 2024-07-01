@@ -16,12 +16,6 @@ check_status
 sudo dpkg-reconfigure tzdata
 check_status
 
-# Install necessary packages
-sudo apt install git -y
-check_status
-sudo apt install unbound -y
-check_status
-
 # Allow necessary firewall rules
 sudo ufw allow 80/tcp
 check_status
@@ -37,6 +31,15 @@ sudo ufw allow 546:547/udp
 check_status
 sudo ufw allow 5335
 check_status
+
+
+# Install necessary packages
+sudo apt install git -y
+check_status
+sudo apt install unbound -y
+check_status
+
+
 
 # Download root hints file for Unbound
 #sudo wget https://www.internic.net/domain/named.root -qO- | sudo tee /var/lib/unbound/root.hints
@@ -129,7 +132,7 @@ sudo apt-get update
 check_status
 
 # Clone Pi-hole repository and run the installation script
-sudo -u pihole git clone --depth 1 https://github.com/pi-hole/pi-hole.git /home/spectre/Pi-hole
+sudo git clone --depth 1 https://github.com/pi-hole/pi-hole.git /home/spectre/Pi-hole
 check_status
 cd /home/spectre/Pi-hole/automated\ install/
 check_status
