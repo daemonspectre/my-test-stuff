@@ -117,6 +117,9 @@ server:
     private-address: fe80::/10
 EOM
 
+# Create the directory if it does not exist
+sudo mkdir -p /etc/unbound/unbound.conf.d/
+
 # Write the Unbound configuration to the file
 echo "$CONFIG" | sudo tee /etc/unbound/unbound.conf.d/pi-hole.conf
 
