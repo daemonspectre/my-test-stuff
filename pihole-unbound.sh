@@ -45,7 +45,7 @@ if ! sudo apt install unbound -y; then
 fi
 
 # Unbound configuration
-read -r -d '' CONFIG << EOM
+read -r -d $'\0' CONFIG << EOM
 # Unbound configuration goes here
 server:
     # If no logfile is specified, syslog is used
