@@ -1,18 +1,27 @@
-#!/bin/bash
-
-STD="sudo"
+#!/usr/bin/bash
 
 msg_info() {
-    echo -e "\e[34m[INFO]\e[0m $1"
+  echo "INFO: $1"
 }
 
 msg_ok() {
-    echo -e "\e[32m[OK]\e[0m $1"
+  echo "OK: $1"
 }
 
+read -r -p "Would you like to apt update and upgrade? <y/N> " prompt
+if [[ ${prompt,,} =~ ^(y|yes)$ ]]; then
+  msg_info "Running apt-get update and upgrade"
+  sudo apt-get update
+  sudo apt-get upgrade
+fi
+
 msg_info "Installing Dependencies"
-$STD apt-get install -y curl sudo mc ufw ntp
-msg_ok "Installed Dependencies"
+sudo apt-get install -y git
+sudo apt-get install -y ntp
+sudo apt-get install -y curl
+
+msg_info "Making firewall rules"
+sudo bash -c 'ufw allow 80/tcp && ufw allow 53/tcp && ufw allow 53/udp && ufw allow 67/tcp && ufw allow 67/udp && ufw allow 546:547/udp'
 
 msg_info "Installing Pi-hole"
 mkdir -p /etc/pihole/
@@ -28,17 +37,17 @@ CACHE_SIZE=10000
 DNS_FQDN_REQUIRED=true
 DNS_BOGUS_PRIV=true
 DNSMASQ_LISTENING=local
-WEBPASSWORD=$(openssl rand -base64 48)
+WEBPASSWORD=changeme
 BLOCKING_ENABLED=true
 EOF
 # View script https://install.pi-hole.net
-$STD bash <(curl -fsSL https://install.pi-hole.net) --unattended
+sudo curl -sSL https://install.pi-hole.net | bash
 msg_ok "Installed Pi-hole"
 
 read -r -p "Would you like to add Unbound? <y/N> " prompt
 if [[ ${prompt,,} =~ ^(y|yes)$ ]]; then
   msg_info "Installing Unbound"
-  $STD apt-get install -y unbound
+  sudo apt-get install -y unbound
   cat <<EOF >/etc/unbound/unbound.conf.d/pi-hole.conf
 server:
   verbosity: 0
@@ -89,12 +98,7 @@ edns-packet-max=1232
 EOF
   wget -qO /var/lib/unbound/root.hints https://www.internic.net/domain/named.root
   sed -i -e 's/PIHOLE_DNS_1=8.8.8.8/PIHOLE_DNS_1=127.0.0.1#5335/' -e 's/PIHOLE_DNS_2=8.8.4.4/#PIHOLE_DNS_2=8.8.4.4/' /etc/pihole/setupVars.conf
-  systemctl enable -q --now unbound
-  systemctl restart pihole-FTL.service
+  sudo systemctl enable -q --now unbound
+  sudo systemctl restart pihole-FTL.service
   msg_ok "Installed Unbound"
 fi
-
-msg_info "Cleaning up"
-$STD apt-get -y autoremove
-$STD apt-get -y autoclean
-msg_ok "Cleaned"
