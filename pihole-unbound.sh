@@ -45,7 +45,8 @@ if ! sudo apt install unbound -y; then
 fi
 
 # Unbound configuration
-read -r -d $'\0' CONFIG << EOM
+sudo mkdir -p /etc/unbound/unbound.conf.d/
+sudo bash -c 'cat > /etc/unbound/unbound.conf.d/pi-hole.conf' << EOF
 # Unbound configuration goes here
 server:
     # If no logfile is specified, syslog is used
@@ -80,24 +81,9 @@ server:
     use-caps-for-id: no
 
     # Reduce EDNS reassembly buffer size.
-    # IP fragmentation is unreliable on the Internet today, and can cause
-    # transmission failures when large DNS messages are sent via UDP. Even
-    # when fragmentation does work, it may not be secure; it is theoretically
-    # possible to spoof parts of a fragmented DNS message, without easy
-    # detection at the receiving end. Recently, there was an excellent study
-    # >>> Defragmenting DNS - Determining the optimal maximum UDP response size for DNS <<<
-    # by Axel Koolhaas, and Tjeerd Slokker (https://indico.dns-oarc.net/event/36/contributions/776/)
-    # in collaboration with NLnet Labs explored DNS using real world data from the
-    # the RIPE Atlas probes and the researchers suggested different values for
-    # IPv4 and IPv6 and in different scenarios. They advise that servers should
-    # be configured to limit DNS messages sent over UDP to a size that will not
-    # trigger fragmentation on typical network links. DNS servers can switch
-    # from UDP to TCP when a DNS response is too big to fit in this limited
-    # buffer size. This value has also been suggested in DNS Flag Day 2020.
     edns-buffer-size: 1232
 
     # Perform prefetching of close to expired message cache entries
-    # This only applies to domains that have been frequently queried
     prefetch: yes
 
     # One thread should be sufficient, can be increased on beefy machines. In reality for most users running on small networks or on a single machine, it should be unnecessary to seek performance enhancement by increasing num-threads above 1.
@@ -115,13 +101,7 @@ server:
     private-address: fe80::/64
     private-address: fd00::/8
     private-address: fe80::/10
-EOM
-
-# Create the directory if it does not exist
-sudo mkdir -p /etc/unbound/unbound.conf.d/
-
-# Write the Unbound configuration to the file
-echo "$CONFIG" | sudo tee /etc/unbound/unbound.conf.d/pi-hole.conf
+EOF
 
 # Restart the Unbound service
 if ! sudo service unbound restart; then
